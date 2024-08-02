@@ -1,23 +1,35 @@
 <?php
 session_start();
 
-if (isset($_SESSION["user"])) {
+if (isset($_SESSION["admin"])) {
+    header("Location: dashboard.php");
+    exit();
 }
 
+if (isset($_SESSION["user"])) {
+    header("Location: home.php");
+    exit();
+}
+
+
 require_once "connection.php";
-require_once "file_upload.php";
+require_once "user_file_upload.php";
+require_once "footer.php";
 
 $error = false;
-$first_name = $last_name = $dob = $picture = $email_address = $address = $password = $rpassword = '';
-$first_nameError = $last_nameError = $dobError = $pictureError = $email_addressError = $addressError = $passwordError = $rpasswordError = '';
+$first_name = $last_name = $dob = $picture = $email_address = $address = $password = $rpassword = $phone_number = '';
+$first_nameError = $last_nameError = $dobError = $pictureError = $email_addressError = $addressError = $passwordError = $rpasswordError = $phone_numberError = '';
 
 if (isset($_POST['btn-signup'])) {
 
     $first_name = cleanInput($_POST['first_name']);
     $last_name = cleanInput($_POST['last_name']);
     $dob = cleanInput($_POST['dob']);
+    $address = cleanInput($_POST['address']);
+    $phone_number = cleanInput($_POST['phone_number']);
     $email_address = cleanInput($_POST['email_address']);
     $password = cleanInput($_POST['password']);
+    $rpassword = cleanInput($_POST['rpassword']);
     $picture = fileUpload($_FILES['picture']);
 
     if (empty($first_name)) {
@@ -54,7 +66,7 @@ if (isset($_POST['btn-signup'])) {
         $error = true;
         $email_addressError = "Please type a valid email!";
     } else {
-        $searchIfEmailExists = "SELECT email_address FROM users WHERE email_address = '$email_address'";
+        $searchIfEmailExists = "SELECT email_address FROM `user` WHERE email_address = '$email_address'";
         $result = mysqli_query($conn, $searchIfEmailExists);
         if (mysqli_num_rows($result) != 0) {
             $error = true;
@@ -68,9 +80,6 @@ if (isset($_POST['btn-signup'])) {
     } elseif (strlen($address) < 3) {
         $error = true;
         $addressError = "Address can't be less than 2 characters!";
-    } elseif (!preg_match("/^[a-zA-Z\s]+$/", $address)) {
-        $error = true;
-        $addressError = "Address must contain only letters and spaces!";
     }
 
     if (empty($password)) {
@@ -88,22 +97,23 @@ if (isset($_POST['btn-signup'])) {
         $error = true;
         $rpasswordError = "Password can't be less than 6 characters";
     }
-
     if (!$error) {
-        $password = hash('sha256', $password);
-
-        $sql = "INSERT INTO `user`(`first_name`, `last_name`, `email`, `dob`, `phone_number`, `address`, `picture`, `password`, `STATUS`) VALUES ('[value-2]','[value-3]','[value-4]','[value-5]','[value-6]','[value-7]','[value-8]','[value-9]','[value-10]')";
-        $result = mysqli_query($conn, $sql);
-
-        if ($result) {
-            echo "  <div class='alert alert-success' role='alert'>
-                        Congratulations, you have successfully created your profile!
-                    </div>";
-            header("refresh: 3; url= login.php");
+        if ($rpassword != $password) {
+            $error = true;
+            $rpasswordError = "Password entries do not match";
         } else {
-            echo "Error!";
+            $password = hash('sha256', $password);
 
-            header("refresh: 3; url= login.php");
+            $sql = "INSERT INTO `user`(`first_name`, `last_name`, `email_address`, `dob`, `phone_number`, `address`, `picture`, `password`) VALUES ('$first_name','$last_name','$email_address','$dob','$phone_number','$address','$picture','$password')";
+            $result = mysqli_query($conn, $sql);
+
+            if ($result) {
+                echo "<div class='alert alert-success' role='alert'>Congratulations, you have successfully created your profile!</div>";
+                header("refresh: 3; url= login.php");
+            } else {
+                echo "Error!";
+                header("refresh: 3; url= login.php");
+            }
         }
     }
 }
@@ -121,7 +131,7 @@ if (isset($_POST['btn-signup'])) {
 </head>
 
 <body>
-
+    <div><?php require_once "./navbar.php"; ?></div>
     <div class="container mt-5">
         <h2 class="mb-3">Registration Form</h2>
         <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) ?>" enctype="multipart/form-data" method="POST">
@@ -139,22 +149,26 @@ if (isset($_POST['btn-signup'])) {
                 <label for="dob">Date of Birth:</label>
                 <input type="date" class="form-control" id="dob" name="dob" value="<?= $dob ?>">
                 <p class="text-danger"><?= $dobError ?></p>
-
             </div>
             <div class="mb-3">
                 <label for="picture">Picture:</label>
                 <input type="file" class="form-control" id="picture" name="picture">
             </div>
             <div class="mb-3">
-                <label for="email_address">Email Address:</label>
-                <input type="email" class="form-control" id="email_address" name="email_address" value="<?= $email_address ?>">
+                <label for="phone_number">phone_number:</label>
+                <input type="number" class="form-control" id="phone_number" name="phone_number" value="<?= $phone_number ?>">
+                <p class="text-danger"><?= $phone_numberError ?></p>
             </div>
-            <p class="text-danger"><?= $email_addressError ?></p>
             <div class="mb-3">
                 <label for="address">Address:</label>
                 <input type="text" class="form-control" id="address" name="address" value="<?= $address ?>">
+                <p class="text-danger"><?= $addressError ?></p>
             </div>
-            <p class="text-danger"><?= $addressError ?></p>
+            <div class="mb-3">
+                <label for="email_address">Email Address:</label>
+                <input type="email" class="form-control" id="email_address" name="email_address" value="<?= $email_address ?>">
+                <p class="text-danger"><?= $email_addressError ?></p>
+            </div>
             <div class="mb-3">
                 <label for="password">Password:</label>
                 <input type="password" class="form-control" id="password" name="password">
@@ -171,7 +185,7 @@ if (isset($_POST['btn-signup'])) {
         </form>
         <a href='home.php?id={$row["id"]}' class='btn btn-dark'>To home page</a>
     </div>
-
+    <div><?= $footer ?></div>
 
 
 
