@@ -19,7 +19,7 @@ require_once "footer.php";
 
 $error = false;
 $first_name = $last_name = $dob = $picture = $address = $password = $rpassword = $phone_number = $layout = '';
-$first_nameError = $last_nameError = $dobError = $pictureError = $addressError = $passwordError = $rpasswordError = $phone_numberError = '';
+$first_nameError = $last_nameError = $dobError = $pictureError = $addressError = $passwordError = $rpasswordError = $phone_numberError = $alertMessage = '';
 
 $user_id = $session;
 $profileSql = "SELECT * FROM `user` WHERE user_id = $session";
@@ -27,8 +27,8 @@ $profileResult = mysqli_query($conn, $profileSql);
 $profileRow = mysqli_fetch_assoc($profileResult);
 
 $layout = "<div class='col mb-4'>
-            <div class='card h-20' style='width:15rem'>
-                <img src='pictures/{$profileRow["picture"]}' class='card-img-top' alt='user image' style='width:100%'>
+            <div class='card h-40' style='width:25rem'>
+                <img src='pictures/{$profileRow["picture"]}' class='card-img-top' alt='user image' style='width:100%; height:25rem'>
                 <div class='card-body'>
                     <h5 class='card-title'>Hello {$profileRow["first_name"]} {$profileRow["last_name"]}</h5>
                 </div>
@@ -86,13 +86,10 @@ if (isset($_POST["edit"])) {
         $resultUpdate = mysqli_query($conn, $sqlUpdate);
 
         if (!$resultUpdate) {
-            echo "<div class='alert alert-danger' role='alert'>
-                <h3>Something went wrong, please try again later!</h3>
-            </div>";
+            $alertMessage = "<div class='alert alert-danger' role='alert'>Something went wrong, please try again later!</div>";
         } else {
-            echo "<div class='alert alert-success' role='alert'>Congratulations, you have successfully updated your profile!</div>";
-            header("refresh: 3; Location:" . $backTo);
-            exit();
+            $alertMessage = "<div class='alert alert-success' role='alert'>Congratulations, you have successfully updated your profile!</div>";
+            header("refresh: 1.5");
         }
     }
 }
@@ -109,44 +106,53 @@ if (isset($_POST["edit"])) {
 </head>
 
 <body>
-    <div><?php require_once "./navbar.php"; ?></div>
-    <div class="container mt-5" style="width:25rem">
-        <h1>Edit profile!</h1>
-        <div><?= $layout ?></div>
-        <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) ?>" enctype="multipart/form-data" method="POST">
-            <div class="mb-3">
-                <label for="first_name">First Name:</label>
-                <input type="text" class="form-control" id="first_name" name="first_name" value="<?= htmlspecialchars($profileRow['first_name']) ?>">
-                <p class="text-danger"><?= $first_nameError ?></p>
+    <?php include "./navbar.php"; ?>
+    <div class="container">
+        <?= $alertMessage ?>
+        <div class="row">
+            <div class="col-md-6 mt-5">
+                <?= $layout ?>
             </div>
-            <div class="mb-3">
-                <label for="last_name">Last Name:</label>
-                <input type="text" class="form-control" id="last_name" name="last_name" value="<?= htmlspecialchars($profileRow['last_name']) ?>">
-                <p class="text-danger"><?= $last_nameError ?></p>
+            <div class="col-md-6 mt-2">
+                <h1>Edit Profile</h1>
+                <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) ?>" enctype="multipart/form-data" method="POST">
+                    <div class="mb-1">
+                        <label for="first_name" class="form-label">First Name:</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" value="<?= htmlspecialchars($profileRow['first_name']) ?>">
+                        <p class="text-danger"><?= $first_nameError ?></p>
+                    </div>
+                    <div class="mb-1">
+                        <label for="last_name" class="form-label">Last Name:</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" value="<?= htmlspecialchars($profileRow['last_name']) ?>">
+                        <p class="text-danger"><?= $last_nameError ?></p>
+                    </div>
+                    <div class="mb-1">
+                        <label for="dob" class="form-label">Date of Birth:</label>
+                        <input type="date" class="form-control" id="dob" name="dob" value="<?= htmlspecialchars($profileRow['dob']) ?>">
+                        <p class="text-danger"><?= $dobError ?></p>
+                    </div>
+                    <div class="mb-1">
+                        <label for="picture" class="form-label">Picture:</label>
+                        <input type="file" class="form-control" id="picture" name="picture">
+                    </div>
+                    <div class="mb-1">
+                        <label for="phone_number" class="form-label">Phone Number:</label>
+                        <input type="number" class="form-control" id="phone_number" name="phone_number" value="<?= htmlspecialchars($profileRow['phone_number']) ?>">
+                        <p class="text-danger"><?= $phone_numberError ?></p>
+                    </div>
+                    <div class="mb-1">
+                        <label for="address" class="form-label">Address:</label>
+                        <input type="text" class="form-control" id="address" name="address" value="<?= htmlspecialchars($profileRow['address']) ?>">
+                        <p class="text-danger"><?= $addressError ?></p>
+                    </div>
+                    <button type="submit" name="edit" class="btn btn-warning">Update Profile</button>
+                </form>
             </div>
-            <div class="mb-3">
-                <label for="dob">Date of Birth:</label>
-                <input type="date" class="form-control" id="dob" name="dob" value="<?= htmlspecialchars($profileRow['dob']) ?>">
-                <p class="text-danger"><?= $dobError ?></p>
-            </div>
-            <div class="mb-3">
-                <label for="picture">Picture:</label>
-                <input type="file" class="form-control" id="picture" name="picture">
-            </div>
-            <div class="mb-3">
-                <label for="phone_number">Phone number:</label>
-                <input type="number" class="form-control" id="phone_number" name="phone_number" value="<?= htmlspecialchars($profileRow['phone_number']) ?>">
-                <p class="text-danger"><?= $phone_numberError ?></p>
-            </div>
-            <div class="mb-3">
-                <label for="address">Address:</label>
-                <input type="text" class="form-control" id="address" name="address" value="<?= htmlspecialchars($profileRow['address']) ?>">
-                <p class="text-danger"><?= $addressError ?></p>
-            </div>
-            <input type="submit" name="edit" value="Update profile" class="btn btn-warning">
-        </form>
+        </div>
     </div>
-    <div><?= $footer ?></div>
+    <footer class="mt-auto fixed">
+        <?= $footer ?>
+    </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 </body>
 
