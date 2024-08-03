@@ -16,8 +16,11 @@ if (isset($_SESSION["admin"])) {
 
 require_once "connection.php";
 require_once "footer.php";
+
+
+
 $error = false;
-$pick_up_dateError = "";
+$pick_up_date = $pick_up_dateError = "";
 $pet_id = $_GET["pet_id"];
 $detailSql = "SELECT * FROM animal WHERE pet_id = {$pet_id}";
 
@@ -54,16 +57,16 @@ if (isset($_POST["adopt"])) {
     if (empty($pick_up_date)) {
         $error = true;
         $pick_up_dateError = "Pick up date can't be empty!";
+        if (!$error) {
+            if ($row["status"] == "available") {
+                $adoptionSql = "INSERT INTO `adoption`(`adoption_status`, `requested_at`, `pick_up_date`, `insurance`, `user_id`, `pet_id`, `status`) VALUES ('$adoption_status','$requested_at','$pick_up_date','$insurance','$user_id','$pet_id', 'pending')";
+                $sqlUpdate = "UPDATE `animal` SET `status`='adopted', WHERE pet_id = $pet_id";
+                mysqli_query($conn, $adoptionSql);
+                mysqli_query($conn, $sqlUpdate);
+                header("Location: home.php");
+            }
+        }
     }
-    if ($row["status"] == "available") {
-        $adoptionSql = "INSERT INTO `adoption`(`adoption_status`, `requested_at`, `pick_up_date`, `insurance`, `user_id`, `pet_id`, `status`) VALUES ('$adoption_status','$requested_at','$pick_up_date','$insurance','$user_id','$pet_id', 'pending')";
-        $sqlUpdate = "UPDATE `animal` SET `status`='adopted', WHERE pet_id = $pet_id";
-        mysqli_query($conn, $adoptionSql);
-        mysqli_query($conn, $sqlUpdate);
-        header("Location: home.php");
-    } else {
-        $layout = "";;
-    };
 }
 
 ?>
@@ -83,11 +86,12 @@ if (isset($_POST["adopt"])) {
 
     <div class="container mt-5">
         <h1 class="mt-5">Adoption details:</h1>
-        <?= $layout ?>
+        <div><?= $layout ?></div>
         <form method="POST" enctype="multipart/form-data">
             <div class="mb-3 mt-3">
                 <label for="from" class="form-label">Pickup date:</label>
-                <input type="date" class="form-control" id="start_date" aria-describedby="start_date" name="start_date">
+                <input type="date" class="form-control" id="pick_up_date" aria-describedby="pick_up_date" name="pick_up_date">
+                <p class="text-danger"><?= $pick_up_dateError ?></p>
             </div>
             <div class="mb-3">
                 <label for="size" class="form-label">Would you like to purchase insurance for <b><?= $detailRow["pet_name"] ?></b> ?</label>

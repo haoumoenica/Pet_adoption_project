@@ -30,7 +30,7 @@ if (isset($_POST['btn-signup'])) {
     $email_address = cleanInput($_POST['email_address']);
     $password = cleanInput($_POST['password']);
     $rpassword = cleanInput($_POST['rpassword']);
-    $picture = fileUpload($_FILES['picture']);
+    $picture = userFileUpload($_FILES['picture']);
 
     if (empty($first_name)) {
         $error = true;

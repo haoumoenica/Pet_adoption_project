@@ -1,5 +1,5 @@
 <?php
-function fileUpload($picture)
+function userFileUpload($picture)
 {
 
     if ($picture["error"] == 4) { // checking if a file has been selected, it will return 0 if you choose a file, and 4 if you didn't
