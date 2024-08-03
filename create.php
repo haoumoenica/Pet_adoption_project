@@ -84,7 +84,7 @@ if (isset($_POST["add_pet"])) {
                     <select class="form-select" aria-label="Default select example" name="size">
                         <option value=""></option>
                         <option value="small">Small</option>
-                        <option value="sedium">Medium</option>
+                        <option value="medium">Medium</option>
                         <option value="large">Large</option>
                     </select>
                 </div>

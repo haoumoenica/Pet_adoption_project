@@ -53,13 +53,7 @@ if (isset($_SESSION["admin"])) {
                                 <a class='nav-link active' aria-current='page' href='home.php'>Home</a>
                             </li>
                             <li class='nav-item'>
-                                <a class='nav-link active' aria-current='page' href='profile.php'>Profile</a>
-                            </li>
-                            <li class='nav-item'>
                                 <a class='nav-link active' aria-current='page' href='create.php'>Add a pet</a>
-                            </li>
-                            <li class='nav-item'>
-                                <a class='nav-link active' aria-current='page' href='seniors.php'>Seniors</a>
                             </li>
                             <li class='nav-item'>
                                 <a class='nav-link active' aria-current='page' href='logout.php?logout'>Logout</a>
@@ -69,10 +63,17 @@ if (isset($_SESSION["admin"])) {
                     </div>
                 </div>
             </nav>";
+
+    //  <li class='nav-item'>
+    //      <a class='nav-link active' aria-current='page' href='profile.php'>Profile</a>
+    //  </li>
+    //  <li class='nav-item'>
+    //      <a class='nav-link active' aria-current='page' href='seniors.php'>Seniors</a>
+    //  </li>
 } else if (!isset($_SESSION["user"]) && !isset($_SESSION["admin"])) {
     echo "<nav class='navbar navbar-expand-lg navbar-dark bg-black'>
                 <div class='container-fluid'>
-                    <a class='navbar-brand' href='home.php'>Petty Store</a>
+                    <a class='navbar-brand' href='index.php'>Petty Store</a>
                     <button class='navbar-toggler' type='button' data-bs-toggle='collapse' data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation'>
                     <span class='navbar-toggler-icon'></span>
                     </button>

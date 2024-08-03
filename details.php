@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION["user"]) && !isset($_SESSION["admin"])) {
+    header("Location: index.php");
+}
+
 require_once "connection.php";
 require_once "footer.php";
 
@@ -18,7 +22,7 @@ if ($row["status"] == "available") {
     $availability_class = "text-success";
     $adopt = "<a href='adopt.php?id={$row["pet_id"]}' class='btn btn-success'>Adopt {$row["pet_name"]}!</a>";
 } else {
-    $availability_text = "{$row["pet_name"]} has found a home, how about one of his friends?";
+    $availability_text = "{$row['pet_name']} has found a home, how about one of his friends?";
     $availability_class = "text-danger";
     $adopt = "";
 }

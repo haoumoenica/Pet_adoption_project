@@ -29,7 +29,7 @@ if (mysqli_num_rows($result) > 0) {
         if ($row["status"] == "available") {
             $availability_text = "Available";
             $availability_class = "text-success";
-            $adopt = "<a href='adopt.php?pet_id={$row["pet_id"]}' class='btn btn-success'>Adopt</a>";
+            $adopt = "<a href='adopt.php?pet_id={$row["pet_id"]}' class='btn btn-success'>Take me home</a>";
         } else {
             $availability_text = "Not Available";
             $availability_class = "text-danger";
