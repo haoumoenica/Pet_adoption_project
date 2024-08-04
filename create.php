@@ -26,7 +26,7 @@ if (isset($_POST["add_pet"])) {
     $sex = cleanInput($_POST['sex']);
     $picture = fileUpload($_FILES['picture']);
 
-    $sql = "INSERT INTO `animal`(`pet_name`, `picture`, `age`, `description`, `address`, `size`, `breed`, `vaccinated`, `sex`) VALUES ('$pet_name','{$picture[0]}','$age','$description','$address','$size','$breed','$vaccinated','$sex')";
+    $sql = "INSERT INTO `pet`(`pet_name`, `picture`, `age`, `description`, `address`, `size`, `breed`, `vaccinated`, `sex`) VALUES ('$pet_name','{$picture[0]}','$age','$description','$address','$size','$breed','$vaccinated','$sex')";
 
     if (mysqli_query($conn, $sql)) {
         echo "<div class='alert alert-success' role='alert'>

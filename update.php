@@ -14,10 +14,10 @@ require_once "connection.php";
 require_once "file_upload.php";
 require_once "footer.php";
 
-
+$alertMessage = '';
 $pet_id = $_GET["pet_id"];
 
-$detailSql = "SELECT * FROM animal WHERE pet_id = {$pet_id}";
+$detailSql = "SELECT * FROM pet WHERE pet_id = {$pet_id}";
 
 $detailResult = mysqli_query($conn, $detailSql);
 
@@ -55,7 +55,7 @@ $layout = "<div class='col mb-4'>
         </div>";
 
 
-$sql = "SELECT * FROM animal WHERE pet_id = $pet_id";
+$sql = "SELECT * FROM pet WHERE pet_id = $pet_id";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 
@@ -67,26 +67,35 @@ if (isset($_POST["update_pet"])) {
     $size = cleanInput($_POST['size']);
     $breed = cleanInput($_POST['breed']);
     $vaccinated = cleanInput($_POST['vaccinated']);
+    $status = cleanInput($_POST['status']);
     $sex = cleanInput($_POST['sex']);
     $picture = fileUpload($_FILES['picture']);
 
 
 
     if ($_FILES["picture"]["error"] == 4) {
-        $sqlUpdate = "UPDATE `animal` SET `pet_name`='{$pet_name}',`age`='{$age}',`description`='{$description}',`address`='{$address}',`size`='{$size}',`breed`='{$breed}',`vaccinated`='{$vaccinated}',`status`='{$status}',`sex`='{$sex}' WHERE pet_id = $pet_id";
+        $sqlUpdate = "UPDATE `pet` SET `pet_name`='{$pet_name}',`age`='{$age}',`description`='{$description}',`address`='{$address}',`size`='{$size}',`breed`='{$breed}',`vaccinated`='{$vaccinated}',`status`='{$status}',`sex`='{$sex}' WHERE pet_id = $pet_id";
     } else {
         if ($row["picture"] != "pet.png") {
             unlink("pictures/{$row["picture"]}");
         }
-        $sqlUpdate = "UPDATE `animal` SET `pet_name`='{$pet_name}',`picture`='{$picture[0]}',`age`='{$age}',`description`='{$description}',`address`='{$address}',`size`='{$size}',`breed`='{$breed}',`vaccinated`='{$vaccinated}',`status`='{$status}',`sex`='{$sex}' WHERE pet_id = $pet_id";
+        $sqlUpdate = "UPDATE `pet` SET `pet_name`='{$pet_name}',`picture`='{$picture[0]}',`age`='{$age}',`description`='{$description}',`address`='{$address}',`size`='{$size}',`breed`='{$breed}',`vaccinated`='{$vaccinated}',`status`='{$status}',`sex`='{$sex}' WHERE pet_id = $pet_id";
     }
 
     $resultUpdate = mysqli_query($conn, $sqlUpdate);
 
-    echo "<div class='alert alert-success' role='alert'>
-            Pet record has been updated.
-          </div>";
-    header("refresh: 3; url= dashboard.php");
+
+    if (!$resultUpdate) {
+        $alertMessage = "<div class='alert alert-danger' role='alert'>Something went wrong, please try again later!</div>";
+    } else {
+        $alertMessage = "<div class='alert alert-success' role='alert'>Pet record has been successfully updated!</div>";
+        header("refresh: 3; url= dashboard.php");
+    }
+
+    // echo "<div class='alert alert-success' role='alert'>
+    //         Pet record has been updated.
+    //       </div>";
+    // header("refresh: 3; url= dashboard.php");
 }
 
 
@@ -104,7 +113,8 @@ if (isset($_POST["update_pet"])) {
 </head>
 
 <body>
-    <div><?php require_once "./navbar.php"; ?></div>
+    <nav><?php require_once "./navbar.php"; ?></nav>
+    <?= $alertMessage ?>
     <div class="container mt-5">
         <h2>Update Pet</h2>
         <div class="row">
@@ -147,11 +157,19 @@ if (isset($_POST["update_pet"])) {
                         </select>
                     </div>
                     <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value=""></option>
+                            <option value="Available" <?= $row['status'] == 'available' ? 'selected' : '' ?>>Available</option>
+                            <option value="Adopted" <?= $row['status'] == 'adopted' ? 'selected' : '' ?>>Adopted</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label for="sex" class="form-label">Sex</label>
                         <select class="form-select" id="sex" name="sex">
                             <option value=""></option>
-                            <option value="Male" <?= $row['sex'] == 'male' ? 'selected' : '' ?>>Male</option>
-                            <option value="Female" <?= $row['sex'] == 'female' ? 'selected' : '' ?>>Female</option>
+                            <option value="Male" <?= $row['sex'] == 'Male' ? 'selected' : '' ?>>Male</option>
+                            <option value="Female" <?= $row['sex'] == 'Female' ? 'selected' : '' ?>>Female</option>
                         </select>
                     </div>
                     <div class="mb-3">

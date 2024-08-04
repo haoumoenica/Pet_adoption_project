@@ -17,7 +17,7 @@ require_once "footer.php";
 $sqlUser = "SELECT * FROM `user` WHERE user_id = " . $_SESSION["user"];
 $resultUser = mysqli_query($conn, $sqlUser);
 $rowUser = mysqli_fetch_assoc($resultUser);
-$sql = "SELECT * FROM animal";
+$sql = "SELECT * FROM pet";
 
 $result = mysqli_query($conn, $sql);
 
