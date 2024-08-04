@@ -17,7 +17,7 @@ $row = mysqli_fetch_assoc($result);
 if ($row["status"] == "available") {
     $availability_text = "Available";
     $availability_class = "text-success";
-    $adopt = "<a href='adopt.php?id={$row["pet_id"]}' class='btn btn-success'>Adopt {$row["pet_name"]}!</a>";
+    $adopt = "<a href='adopt.php?pet_id={$row["pet_id"]}' class='btn btn-success'>Adopt {$row["pet_name"]}!</a>";
 } else {
     $availability_text = "{$row['pet_name']} has found a home, how about one of his friends?";
     $availability_class = "text-danger";
@@ -54,14 +54,15 @@ $layout = "<div class='col mb-4'>
 </head>
 
 <body>
-    <div><?php require_once "./navbar.php"; ?></div>
+    <nav><?php require_once "./navbar.php"; ?></nav>
 
     <div class="container mt-5">
-
         <h1 class="mt-5">Details</h1>
         <?= $layout ?>
     </div>
-    <div><?= $footer ?></div>
+    <footer class="mt-auto fixed">
+        <?= $footer ?>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 </body>

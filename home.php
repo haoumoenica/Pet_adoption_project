@@ -17,8 +17,7 @@ require_once "footer.php";
 $sqlUser = "SELECT * FROM `user` WHERE user_id = " . $_SESSION["user"];
 $resultUser = mysqli_query($conn, $sqlUser);
 $rowUser = mysqli_fetch_assoc($resultUser);
-$sql = "SELECT * FROM pet";
-
+$sql = "SELECT pet.*, adoption.pet_id as adoption_pet_id,adoption.adoption_status,adoption.pick_up_date,adoption.confirmation_status, adoption.insurance FROM `pet` left join `adoption` on pet.pet_id = adoption.pet_id;";
 $result = mysqli_query($conn, $sql);
 
 $layout = "";
