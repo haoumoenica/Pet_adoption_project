@@ -15,9 +15,10 @@ require_once "footer.php";
 require_once "delete.php";
 
 $sqlUser = "SELECT * FROM `user` WHERE user_id = " . $_SESSION["admin"];
+
 $resultUser = mysqli_query($conn, $sqlUser);
 $rowUser = mysqli_fetch_assoc($resultUser);
-$sql = "SELECT * FROM `animal` left join `adoption` on animal.pet_id = adoption.pet_id";
+$sql = "SELECT animal.*, adoption.pet_id as adoption_pet_id,adoption.adoption_status,adoption.pick_up_date,adoption.confirmation_status, adoption.insurance FROM `animal` left join `adoption` on animal.pet_id = adoption.pet_id;";
 
 $result = mysqli_query($conn, $sql);
 

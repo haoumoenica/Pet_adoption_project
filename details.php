@@ -10,10 +10,7 @@ require_once "footer.php";
 $pet_id = $_GET["pet_id"];
 
 $sql = "SELECT * FROM animal WHERE pet_id = {$pet_id}";
-
 $result = mysqli_query($conn, $sql);
-
-#one result only,
 
 $row = mysqli_fetch_assoc($result);
 
