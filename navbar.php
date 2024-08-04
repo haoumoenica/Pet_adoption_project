@@ -1,18 +1,7 @@
 <?php
 require_once "connection.php";
-// require_once "logout.php";
-
-// if (isset($_SESSION["user"])) {
-//     $user_id = $_SESSION["user"];
-// } else {
-//     $user_id = $_SESSION["admin"];
-// }
 
 if ((isset($_SESSION["user"]))) {
-    // $user_id = $_SESSION["user"];
-    // $sql = "SELECT * FROM `user` WHERE user_id = $user_id";
-    // $result = mysqli_query($conn, $sql);
-    // $row = mysqli_fetch_assoc($result);
 
     echo "<nav class='navbar navbar-expand-lg navbar-dark bg-black'>
                 <div class='container-fluid'>

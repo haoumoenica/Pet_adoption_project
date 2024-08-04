@@ -109,9 +109,7 @@ if (isset($_POST["adopt"])) {
                 <select class="form-select" id="insurance" name="insurance">
                     <option value=""></option>
                     <option value="Yes">Yes</option>
-                    <!-- $row['insurance'] == 'Yes' ? 'selected' : ''  -->
                     <option value="No">No</option>
-                    <!-- $row['insurance'] == 'No' ? 'selected' : '' -->
                 </select>
             </div>
             <button name="adopt" type="submit" class="btn btn-success">Reserve for Adoption</button>

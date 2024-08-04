@@ -1,9 +1,0 @@
-body {
-    padding-top: 56px; /* Space for Navbar */
-}
-.alert-container {
-    z-index: 1050; /* Ensure alerts are above other elements */
-}
-.footer {
-    margin-top: auto; /* Push footer to the bottom */
-}

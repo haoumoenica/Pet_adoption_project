@@ -17,9 +17,13 @@ $row = mysqli_fetch_assoc($result);
 if ($row["status"] == "available") {
     $availability_text = "Available";
     $availability_class = "text-success";
-    $adopt = "<a href='adopt.php?pet_id={$row["pet_id"]}' class='btn btn-success'>Adopt {$row["pet_name"]}!</a>";
+    $adopt = "<a href='adopt.php?pet_id={$row["pet_id"]}' class='btn btn-success'>Take me home</a>";
+} elseif ($row["status"] == "reserved") {
+    $availability_text = "Reserved";
+    $availability_class = "text-warning";
+    $adopt = "";
 } else {
-    $availability_text = "{$row['pet_name']} has found a home, how about one of his friends?";
+    $availability_text = "Not Available";
     $availability_class = "text-danger";
     $adopt = "";
 }

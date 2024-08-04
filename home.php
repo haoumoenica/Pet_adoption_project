@@ -38,7 +38,7 @@ if (mysqli_num_rows($result) > 0) {
         } else {
             $availability_text = "Not Available";
             $availability_class = "text-danger";
-            $adopt = "";
+            $adopt = "<span>$adopt</span>";
         }
 
         $layout .= "<div class='col mb-4'>
@@ -51,8 +51,10 @@ if (mysqli_num_rows($result) > 0) {
                                 <p class='card-text'><b>Sex:</b> {$row["sex"]}</p>
                                 <p class='card-text'><b>Vaccinated:</b> {$row["vaccinated"]}</p>
                                 <p class='card-text {$availability_class}'><b>{$availability_text}</b></p>
-                                <a href='details.php?pet_id={$row["pet_id"]}' class='btn btn-warning'>Details</a>
-                                <span>$adopt</span>
+                                <div class='card-footer d-flex justify-content-around'>
+                                    <a href='details.php?pet_id={$row["pet_id"]}' class='btn btn-warning text-white'>Details</a>
+                                    $adopt
+                                </div>
                             </div>
                         </div>
                     </div>";
@@ -61,7 +63,6 @@ if (mysqli_num_rows($result) > 0) {
     $layout = "<p>No results found</p>";
 }
 
-// mysqli_close($conn);
 ?>
 
 <!doctype html>
