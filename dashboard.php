@@ -17,7 +17,8 @@ $sqlUser = "SELECT * FROM `user` WHERE user_id = " . $_SESSION["admin"];
 
 $resultUser = mysqli_query($conn, $sqlUser);
 $rowUser = mysqli_fetch_assoc($resultUser);
-$sql = "SELECT pet.*, adoption.pet_id as adoption_pet_id,adoption.adoption_status,adoption.pick_up_date,adoption.confirmation_status, adoption.insurance FROM `pet` left join `adoption` on pet.pet_id = adoption.pet_id;";
+// $sql = "SELECT pet.*, adoption.pet_id as adoption_pet_id,adoption.adoption_status,adoption.pick_up_date,adoption.confirmation_status, adoption.insurance FROM `pet` left join `adoption` on pet.pet_id = adoption.pet_id;";
+$sql = "SELECT pet.*, adoption.pet_id AS adoption_pet_id,adoption.adoption_status,adoption.pick_up_date,adoption.confirmation_status,adoption.insurance FROM pet LEFT JOIN adoption ON pet.pet_id = adoption.pet_id WHERE pet.status IN ('available', 'reserved') GROUP BY pet.pet_id";
 
 $result = mysqli_query($conn, $sql);
 
@@ -31,29 +32,39 @@ if (mysqli_num_rows($result) > 0) {
             $availability_text = "Available";
             $availability_class = "text-success";
             $confirmation = "";
+        } elseif ($row["status"] == "reserved") {
+            $availability_text = "Reserved";
+            $availability_class = "text-warning";
+            $confirmation = "<a href='confirm_adoption.php?pet_id={$row["pet_id"]}' class='btn btn-primary'>Confirm Adoption!</a>";
         } else {
             $availability_text = "Not Available";
             $availability_class = "text-danger";
-            if ($row["adoption_status"] == "pending") {
+            if ($row["adoption_status"] == "requested") {
                 $status = "<p class='card-text'><b>Status:</b> {$row["status"]}</p>";
-                $confirmation = "<a href='#' class='btn btn-primary'>Confirm Adoption!</a>";
+                $confirmation = "";
             }
         }
 
+
         $layout .= "<div class='col mb-4'>
-                        <div class='card h-100' style='width: 25rem';>
-                            <div class='h-50'><img src='pictures/{$row["picture"]}' class='card-img-top'  alt='Pet Image' style='height: 20rem'; ></div>
-                            <div class='card-body'>
+                        <div class='card h-100 d-flex flex-column'>
+                            <img src='pictures/{$row["picture"]}' class='card-img-top' alt='Pet Image' style='height: 20rem; object-fit: cover;'>
+                            <div class='card-body d-flex flex-column'>
                                 <h5 class='card-title'>{$row["pet_name"]}</h5>
                                 <p class='card-text'><b>Breed:</b> {$row["breed"]}</p>
                                 <p class='card-text'><b>Age:</b> {$row["age"]}</p>
                                 <p class='card-text'><b>Sex:</b> {$row["sex"]}</p>
                                 <p class='card-text'><b>Vaccinated:</b> {$row["vaccinated"]}</p>
                                 <p class='card-text {$availability_class}'><b>{$availability_text}</b></p>
+                                $status
+                                <div class='mt-auto d-flex justify-content-center'>
+                                    $confirmation
+                                </div>
+                            </div>
+                            <div class='card-footer d-flex justify-content-around'>
                                 <a href='details.php?pet_id={$row["pet_id"]}' class='btn btn-warning text-white'>Details</a>
                                 <a href='update.php?pet_id={$row["pet_id"]}' class='btn btn-info text-white'>Update</a>
                                 <a href='delete.php?pet_id={$row["pet_id"]}' class='btn btn-danger'>Delete</a>
-                                <div class='mt-3'>$confirmation</div>
                             </div>
                         </div>
                     </div>";

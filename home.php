@@ -17,7 +17,9 @@ require_once "footer.php";
 $sqlUser = "SELECT * FROM `user` WHERE user_id = " . $_SESSION["user"];
 $resultUser = mysqli_query($conn, $sqlUser);
 $rowUser = mysqli_fetch_assoc($resultUser);
-$sql = "SELECT pet.*, adoption.pet_id as adoption_pet_id,adoption.adoption_status,adoption.pick_up_date,adoption.confirmation_status, adoption.insurance FROM `pet` left join `adoption` on pet.pet_id = adoption.pet_id;";
+$sql = "SELECT pet.*, adoption.pet_id AS adoption_pet_id, adoption.adoption_status, adoption.pick_up_date, adoption.confirmation_status, adoption.insurance FROM pet LEFT JOIN adoption ON pet.pet_id = adoption.pet_id WHERE pet.status IN ('available', 'reserved') GROUP BY pet.pet_id";
+
+
 $result = mysqli_query($conn, $sql);
 
 $layout = "";
@@ -29,12 +31,15 @@ if (mysqli_num_rows($result) > 0) {
             $availability_text = "Available";
             $availability_class = "text-success";
             $adopt = "<a href='adopt.php?pet_id={$row["pet_id"]}' class='btn btn-success'>Take me home</a>";
+        } elseif ($row["status"] == "reserved") {
+            $availability_text = "Reserved";
+            $availability_class = "text-warning";
+            $adopt = "";
         } else {
             $availability_text = "Not Available";
             $availability_class = "text-danger";
             $adopt = "";
         }
-
 
         $layout .= "<div class='col mb-4'>
                         <div class='card h-100' style='width: 25rem';>

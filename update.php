@@ -33,9 +33,23 @@ if ($row["status"] == "available") {
     $availability_class = "text-danger";
 }
 
+if ($row["status"] == "available") {
+    $availability_text = "Available";
+    $availability_class = "text-success";
+    $adopt = "<a href='adopt.php?pet_id={$row["pet_id"]}' class='btn btn-success'>Take me home</a>";
+} elseif ($row["status"] == "reserved") {
+    $availability_text = "{$row["pet_name"]} is reserved, how about one of his friends?";
+    $availability_class = "text-warning";
+    $adopt = "";
+} else {
+    $availability_text = "Not Available";
+    $availability_class = "text-danger";
+    $adopt = "";
+}
+
 $layout = "<div class='col mb-4'>
             <div class='card h-100'>
-                <img src='pictures/{$row["picture"]}' class='card-img-top' alt='Pet Image' style='height: auto; max-height: 15rem;'>
+                <img src='pictures/{$row["picture"]}' class='card-img-top' alt='Pet Image' style='height: auto; max-height: 25rem;'>
                 <div class='card-body'>
                     <h5 class='card-title'>{$row["pet_name"]}</h5>
                     <div class='row'>
@@ -162,6 +176,7 @@ if (isset($_POST["update_pet"])) {
                             <option value=""></option>
                             <option value="Available" <?= $row['status'] == 'available' ? 'selected' : '' ?>>Available</option>
                             <option value="Adopted" <?= $row['status'] == 'adopted' ? 'selected' : '' ?>>Adopted</option>
+                            <option value="Reserved" <?= $row['status'] == 'reserved' ? 'selected' : '' ?>>Reserved</option>
                         </select>
                     </div>
                     <div class="mb-3">

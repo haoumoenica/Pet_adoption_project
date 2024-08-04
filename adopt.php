@@ -20,7 +20,7 @@ require_once "footer.php";
 
 
 $error = false;
-$pick_up_date = $pick_up_dateError = "";
+$pick_up_date = $pick_up_dateError = $insurance = "";
 $pet_id = $_GET["pet_id"];
 $detailSql = "SELECT * FROM pet WHERE pet_id = {$pet_id}";
 
@@ -49,22 +49,33 @@ $layout = "<div class='col mb-4'>
 
 
 if (isset($_POST["adopt"])) {
+    $user_id = $_SESSION["user"];
+    $pet_id = $_GET["pet_id"];
     $pick_up_date = cleanInput($_POST['pick_up_date']);
     $sql = "SELECT * FROM pet WHERE pet_id = {$pet_id}";
     $result = mysqli_query($conn, $sql);
     $row = mysqli_fetch_assoc($result);
-    $userId = $_SESSION["user"];
+    $insurance = cleanInput($_POST['insurance']);
     if (empty($pick_up_date)) {
         $error = true;
         $pick_up_dateError = "Pick up date can't be empty!";
-        if (!$error) {
-            if ($row["status"] == "available") {
-                $adoptionSql = "INSERT INTO `adoption`(`adoption_status`, `requested_at`, `pick_up_date`, `insurance`, `user_id`, `pet_id`, `status`) VALUES ('$adoption_status','$requested_at','$pick_up_date','$insurance','$user_id','$pet_id', 'pending')";
-                $sqlUpdate = "UPDATE `pet` SET `status`='adopted', WHERE pet_id = $pet_id";
-                mysqli_query($conn, $adoptionSql);
-                mysqli_query($conn, $sqlUpdate);
-                header("Location: home.php");
+    }
+    if (!$error) {
+        if ($row["status"] == "available") {
+            $adoptionSql = "INSERT INTO `adoption`( `adoption_status`, `pick_up_date`, `insurance`, `user_id`, `pet_id`, `confirmation_status`) VALUES ('requested', '$pick_up_date','$insurance','$user_id','$pet_id', 'pending')";
+            $adoptionResult = mysqli_query($conn, $adoptionSql);
+            if (!$adoptionResult) {
+                die("Error inserting adoption record: " . mysqli_error($conn));
             }
+
+            $sqlUpdate = "UPDATE `pet` SET `status`='reserved' WHERE pet_id = $pet_id";
+            $resultUpdate = mysqli_query($conn, $sqlUpdate);
+            if (!$resultUpdate) {
+                die("Error updating pet status: " . mysqli_error($conn));
+            }
+
+
+            header("Location: home.php");
         }
     }
 }
@@ -98,7 +109,9 @@ if (isset($_POST["adopt"])) {
                 <select class="form-select" id="insurance" name="insurance">
                     <option value=""></option>
                     <option value="Yes">Yes</option>
+                    <!-- $row['insurance'] == 'Yes' ? 'selected' : ''  -->
                     <option value="No">No</option>
+                    <!-- $row['insurance'] == 'No' ? 'selected' : '' -->
                 </select>
             </div>
             <button name="adopt" type="submit" class="btn btn-success">Reserve for Adoption</button>
